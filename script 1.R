@@ -168,17 +168,35 @@ actphys_adultes_clust<-actphys_adultes %>%
 
 
 
-
+library(FactoMineR)
 library(factoextra)
 library(cluster)
 
 # Méthode du coude
-elbow_method <- fviz_nbclust(habitudes_indiv_clustering, kmeans, method = "wss", k.max = 10)
+elbow_method <- fviz_nbclust(actphys_adultes_clust, kmeans, method = "wss", k.max = 10)
 elbow_method
 
 
+res_acp <- PCA(actphys_adultes_clust)
+hc<-HCPC(res_acp,nb.clust = 3)
 
 
+coord<-res_acp$ind$coord
+k_moyennes <- kmeans(coord, centers = 3)
+
+actphys_adultes_clust<- cbind(actphys_adultes_clust,k_moyennes$cluster)
+
+table(actphys_adultes_clust$`k_moyennes$cluster`)
+
+mean(actphys_adultes_clust$activite_total_score[actphys_adultes_clust$`k_moyennes$cluster`==1],na.rm = TRUE)
+mean(actphys_adultes_clust$activite_total_score[actphys_adultes_clust$`k_moyennes$cluster`==2],na.rm = TRUE)
+mean(actphys_adultes_clust$activite_total_score[actphys_adultes_clust$`k_moyennes$cluster`==3],na.rm = TRUE)
+
+
+
+prop.table(table(actphys_adultes_clust$nap,actphys_adultes_clust$`k_moyennes$cluster`),margin=2)
+
+#le groupe 2 semble plus sédentaire, et moins d'activité physique, le groupe 1 est le plus actif
 
 
 
