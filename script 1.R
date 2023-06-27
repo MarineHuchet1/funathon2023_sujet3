@@ -57,7 +57,7 @@ actphys_sedent<-actphys_sedent %>%
 
 prop.table(table(actphys_sedent$transport_personnel))
 prop.table(table(actphys_sedent$transport_ecole))
-#moyens de tranport différents
+
 
 ggplot(data=actphys_sedent,aes(x=tv_duree, fill=factor(POPULATION)))+
   geom_histogram(binwidth=1,color="grey",fill="lightblue")
@@ -95,8 +95,88 @@ actphys_adultes<-actphys_sedent[actphys_sedent$POPULATION=="Pop2 Individu",]
 ggplot(data=actphys_enfants,aes(x=ordi_duree))+
   geom_histogram(binwidth=1,color="grey",fill="lightblue")
 
-ggplot(data=actphys_adultes,aes(x=ordi_duree))+
+ggplot(data=actphys_enfants,aes(x=activite_musculation_nbjours))+
   geom_histogram(binwidth=1,color="grey",fill="lightblue")
+prop.table(table(actphys_enfants$enfant_actif))
+
+
+ggplot(data=actphys_sedent,aes(x=sedentarite_duree))+
+  geom_histogram(binwidth=1,color="grey",fill="lightblue")
+
+
+
+actphys_sedent$nap<-as.factor(actphys_sedent$nap)
+
+ggplot(actphys_sedent)+aes(x=nap)+geom_bar(aes(fill=nap))
+
+ggplot(actphys_adultes)+aes(x=nap)+geom_bar(aes(fill=nap))
+ggplot(actphys_enfants)+aes(x=nap)+geom_bar(aes(fill=nap))
+
+
+prop.table(table(actphys_sedent$nap, actphys_sedent$POPULATION))
+
+
+
+ggplot(actphys_sedent, aes(x = POPULATION, y= tv_duree, color=POPULATION))+ geom_boxplot()
+
+
+ggplot(data=actphys_adultes,aes(x=activite_total_score))+
+  geom_histogram(binwidth=1,color="grey",fill="lightblue")
+
+ggplot(actphys_enfants)+aes(x=profil_activite)+geom_bar(aes(fill=profil_activite))
+
+
+ggplot(data=actphys_adultes,aes(x=activite_total_score,fill=profil_activite))+
+  geom_histogram(binwidth=1,color="grey",fill="lightblue")
+
+
+
+ggplot(data=actphys_adultes,aes(x=profil_activite, fill=nap))+geom_bar(stat="identity")
+
+barplot <- function(variable){
+  ggplot(actphys_sedent) +
+    aes(x = factor(eval(parse(text = variable))), fill = factor(POPULATION)) +
+    geom_bar(position = "fill") +
+    xlab(variable) +
+    ylab("Proportion") +
+    labs(fill = "Population") +
+    scale_y_continuous(labels = scales::percent) +
+    theme_classic() +
+    scale_fill_brewer()
+} 
+
+barplot("transport_personnel")
+
+
+ggplot(actphys_sedent) +
+    aes(x = factor(eval(parse(text = variable))), fill = factor(POPULATION)) +
+    geom_bar(position = "fill") +
+    xlab(variable) +
+    ylab("Proportion") +
+    labs(fill = "Population") +
+    scale_y_continuous(labels = scales::percent) +
+    theme_classic() +
+    scale_fill_brewer()
+} 
+
+
+summary(actphys_adultes)
+colnames(actphys_adultes)
+actphys_adultes_clust<-actphys_adultes %>%
+  select(3,6,8,10,24,84,85,86,87,88,89,90)
+
+
+
+
+
+library(factoextra)
+library(cluster)
+
+# Méthode du coude
+elbow_method <- fviz_nbclust(habitudes_indiv_clustering, kmeans, method = "wss", k.max = 10)
+elbow_method
+
+
 
 
 
