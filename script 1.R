@@ -33,6 +33,16 @@ options(repr.plot.width=20, repr.plot.height=10)
 
 
 
+ponderations<-description_indiv %>%
+  select(NOIND, pond_indiv_adu_pop2, pond_indiv_enf_pop1)
+
+actphys_sedent<-actphys_sedent %>%
+  left_join(ponderations)
+
+
+
+actphys_enfants<-actphys_sedent[actphys_sedent$POPULATION=="Pop1 Individu",] 
+actphys_adultes<-actphys_sedent[actphys_sedent$POPULATION=="Pop2 Individu",] 
 
 
 prop.table(table(actphys_sedent$transport_personnel))
@@ -44,13 +54,6 @@ ggplot(data=actphys_sedent,aes(x=tv_duree))+
 
 
 mean(actphys_sedent$tv_duree,na.rm=TRUE)
-
-
-ponderations<-description_indiv %>%
-  select(NOIND, pond_indiv_adu_pop2, pond_indiv_enf_pop1)
-
-actphys_sedent<-actphys_sedent %>%
-  left_join(ponderations)
 
 
 
@@ -180,6 +183,8 @@ elbow_method
 res_acp <- PCA(actphys_adultes_clust)
 hc<-HCPC(res_acp,nb.clust = 3)
 
+actphys_adultes_clust<-cbind(actphys_adultes_clust,hc$data.clust$clust)
+
 
 coord<-res_acp$ind$coord
 k_moyennes <- kmeans(coord, centers = 3)
@@ -187,6 +192,9 @@ k_moyennes <- kmeans(coord, centers = 3)
 actphys_adultes_clust<- cbind(actphys_adultes_clust,k_moyennes$cluster)
 
 table(actphys_adultes_clust$`k_moyennes$cluster`)
+
+
+hc$data.clust
 
 mean(actphys_adultes_clust$activite_total_score[actphys_adultes_clust$`k_moyennes$cluster`==1],na.rm = TRUE)
 mean(actphys_adultes_clust$activite_total_score[actphys_adultes_clust$`k_moyennes$cluster`==2],na.rm = TRUE)
